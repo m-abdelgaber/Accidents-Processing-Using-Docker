@@ -1,0 +1,8 @@
+scikit-learn
+dash
+pandas
+numpy
+matplotlib
+seaborn
+datetime
+scipy
