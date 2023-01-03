@@ -5,7 +5,7 @@
   
 2- run the postgres docker inside "postgres_accidents_datasets" folder
 
-3- follow lab 10 to run the airfllow containers
+3- follow lab 10 notebook to run the airfllow containers
 
 4- if no errors, open http://localhost:8080/ and turn on the milestone3_pipeline process
 
