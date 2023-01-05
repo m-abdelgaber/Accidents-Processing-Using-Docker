@@ -10,6 +10,9 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from sqlalchemy import create_engine
+import plotly.express as px
+import plotly.graph_objs as go
+# import plotly.plotly as py
 
 # dataset = '1990_Accidents_UK.csv'
 from milestone_processing import milestone1, milestone2
@@ -23,28 +26,76 @@ def milestone2_processing(cleaned_data_path, additional_data_path, integrated_da
     print('milestone 2 processing done')
 
 
+def accident_severity_histogram(df):
+    df['accident_severity'] = df.accident_severity.map({0:'Slight', 1:'Serious', 2:'Fatal'})
+    fig = px.histogram(df,x = "accident_severity")
+    return fig
+
+def season_histogram(df):
+    fig = px.histogram(df,x = "season")
+    return fig
+
+def life_stage_histogram(df):
+    fig = px.histogram(df,x = "life_stage")
+    return fig
+
+def hour_scatter(df):
+    hour_count = df.groupby(['hour'])['number_of_casualties'].sum()
+    fig_title = "number of casualties per hour"
+    fig = px.scatter(x= hour_count.index, y = hour_count)
+    fig.update_layout(
+        title = fig_title,
+        xaxis_title = "hour",
+        yaxis_title = "number of casualties"
+    )
+    return fig
+
+def month_scatter(df):
+    month_count = df.groupby(['month'])['number_of_casualties'].sum()
+    fig_title = "number of casualties per month"
+    fig = px.scatter(x= month_count.index, y = month_count)
+    fig.update_layout(
+        title = fig_title,
+        xaxis_title = "month",
+        yaxis_title = "number of casualties"
+    )
+    return fig
 
 def create_dashboard(filename):
+    df = pd.read_csv(filename)
     app = dash.Dash()
     app.layout = html.Div(
     children=[
         html.H1(children="UK accidents in year 1990",),
         html.P(
-            children="Age vs Survived Titanic dataset",
+            children="Accident severity histogram",
             style={"textAlign": "center"},
         ),
-        # dcc.Graph(
-        #     figure={
-        #         "data": [
-        #             {
-        #                 "x": df["Age"],
-        #                 "y": df["Survived"],
-        #                 "type": "lines",
-        #             },
-        #         ],
-        #         "layout": {"title": "Age vs Survived"},
-        #     },
-        # )
+        dcc.Graph(figure = accident_severity_histogram(df)),
+        html.Br(),
+        html.P(
+            children="season histogram",
+            style={"textAlign": "center"},
+        ),
+        dcc.Graph(figure = season_histogram(df)),
+        html.Br(),
+        html.P(
+            children="Life Stage histogram",
+            style={"textAlign": "center"},
+        ),
+        dcc.Graph(figure = life_stage_histogram(df)),
+        html.Br(),
+        html.P(
+            children="Number of casualties per hour scatter plot",
+            style={"textAlign": "center"},
+        ),
+        dcc.Graph(figure = hour_scatter(df)),
+        html.Br(),
+        html.P(
+            children="Number of casualties per month scatter plot",
+            style={"textAlign": "center"},
+        ),
+        dcc.Graph(figure = month_scatter(df)),
     ]
 )
     app.run_server(host='0.0.0.0')

@@ -1,6 +1,5 @@
 *.pyc
 logs
-**/.env
 milestone3_postgres
 UK_Accidents_1990.csv
 1990_Accidents_UK.csv
